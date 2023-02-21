@@ -5,12 +5,8 @@ declare(strict_types=1);
 namespace App\API;
 
 use App\Post\Application\Command\CreatePostCommand;
-use App\Entity\Post;
-use App\Post\Form\Type\PostType;
 use App\Shared\Domain\Bus\CommandBus;
-use Doctrine\DBAL\Types\TextType;
 use Exception;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +31,7 @@ class CreatePostController
         $validator = Validation::createValidator();
         $constraint = new Assert\Collection([
             'title' => [
-                new Assert\Regex(pattern: "#^(?!Qwerty*$).*#i", groups: ['check-title-qwerty-group']),
+                new Assert\Regex(pattern: "#^(?!Qwerty*$).*#i", message: "Value must not start with 'Qwerty'"),
                 new Assert\Length(['max' => 255]),
                 new Assert\NotBlank(),
             ],
@@ -83,28 +79,5 @@ class CreatePostController
             ],
             Response::HTTP_OK,
         );
-    }
-
-    private function processForm(Request $request, FormInterface $form)
-    {
-        $data = json_decode($request->getContent(), true);
-        $clearMissing = $request->getMethod() != 'POST';
-        $form->submit($data, $clearMissing);
-    }
-
-    private function getErrorsFromForm(FormInterface $form)
-    {
-        $errors = array();
-        foreach ($form->getErrors() as $error) {
-            $errors[] = $error->getMessage();
-        }
-        foreach ($form->all() as $childForm) {
-            if ($childForm instanceof FormInterface) {
-                if ($childErrors = $this->getErrorsFromForm($childForm)) {
-                    $errors[$childForm->getName()] = $childErrors;
-                }
-            }
-        }
-        return $errors;
     }
 }
