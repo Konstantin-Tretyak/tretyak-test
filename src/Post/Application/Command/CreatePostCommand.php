@@ -12,6 +12,7 @@ class CreatePostCommand implements Command
         public readonly ?string $id,
         public readonly string $title,
         public readonly string $summary,
+        public readonly string $description
     ) {
     }
 }

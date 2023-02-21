@@ -29,6 +29,7 @@ class CreatePostController
             id: $payload['id'] ?? (string)Uuid::v4(),
             title: $payload['title'],
             summary: $payload['summary'],
+            description: $payload['description'],
         );
 
         try {

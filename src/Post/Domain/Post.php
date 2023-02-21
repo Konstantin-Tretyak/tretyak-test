@@ -24,20 +24,24 @@ class Post extends AggregateRoot
     #[ORM\Column(length: 255)]
     private string $summary;
 
-    public function __construct(string $id, string $title, string $summary)
+    #[ORM\Column(type: "text", nullable: true)]
+    private string $description;
+
+    public function __construct(string $id, string $title, string $summary, string $description)
     {
         $this->id = Uuid::fromString($id);
         $this->title = $title;
         $this->summary = $summary;
+        $this->description = $description;
     }
 
-    public static function new(string $id, string $title, string $summary): self
+    public static function new(string $id, string $title, string $summary, string $description): self
     {
         Assert::that($id)->uuid();
         Assert::that($title)->maxLength(20)->notBlank();
         Assert::that($summary)->maxLength(255)->notBlank();
 
-        return new self($id, $title, $summary);
+        return new self($id, $title, $summary, $description);
     }
 
     public function getId(): Uuid
